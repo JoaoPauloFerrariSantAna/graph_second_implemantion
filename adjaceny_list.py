@@ -50,12 +50,12 @@ class AdjacencyList():
 
 		self.__adjacencylist["vertices"].append(vertice)
 	
-	def appendEdge(self, edge: str, origin: str, dest: str) -> None:
-		if(origin not in self.__adjacencylist["vertices"] or dest not in self.__adjacencylist["vertices"]):
+	def appendEdge(self, pairToAdd: Pairs) -> None:
+		if(pairToAdd[ORIGIN] not in self.__adjacencylist["vertices"] or pairToAdd[DESTINATION] not in self.__adjacencylist["vertices"]):
 			raise Exception("Edge does not exists in list")
 
-		self.__adjacencylist["edges"].append([origin, dest])
-		self.__adjacencylist["edges"].append([dest, origin])
+		self.__adjacencylist["edges"].append([pairToAdd[ORIGIN], pairToAdd[DESTINATION]])
+		self.__adjacencylist["edges"].append([pairToAdd[DESTINATION], pairToAdd[ORIGIN]])
 	
 	def removeVertice(self, verticeName: str) -> None:
 		self.__removeInVertices(verticeName)
@@ -79,7 +79,7 @@ class AdjacencyList():
 
 		return True
 	
-	def getNeighboorsFrom(self, verticeName: str, edges: Pairs) -> NodeNeighbors:
+	def getNeighboorsFrom(self, verticeName: str) -> NodeNeighbors:
 		# NOTE: i think there might have a bug here with the current implementation
 		edgesList = self.__adjacencylist["edges"]
 		neighboors = []
@@ -90,8 +90,8 @@ class AdjacencyList():
 
 		return neighboors
 
-	def printNeighboorsOf(self, verticeName: str, edge: Pairs) -> None:
-		neighbors = self.getNeighboorsFrom(verticeName, edge)
+	def printNeighboorsOf(self, verticeName: str) -> None:
+		neighbors = self.getNeighboorsFrom(verticeName)
 
 		print(f"{verticeName} has of neighboors: {neighbors}")
 
