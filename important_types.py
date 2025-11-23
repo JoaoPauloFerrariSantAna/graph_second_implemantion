@@ -1,11 +1,13 @@
+from typing import TypedDict
 from node import Node  
 
-# like a matrix
-NodeNeighbors = list[str]
-NodeList = dict[str, list[str]]
-NodeOutDegree = int
+Pairs = list[str]
+Adjacencies = TypedDict("Adjacencies", { "vertices": list[str], "edges": list[Pairs] });
+Degree = dict
 NodeInDegree = int
+NodeOutDegree = int
 NodeTotal = NodeOutDegree | NodeInDegree
 NodeConnections = list[Node]
+NodeList = dict[str, list[str]]
+NodeNeighbors = list[str]
 Path = list[str]
-Degree = dict[str, dict[str, NodeTotal]]

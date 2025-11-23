@@ -31,8 +31,9 @@ class Graph():
 		return (pathLength < MINIMAL_TRIVIAL_LENGTH)
 
 	def __inEdge(self, origin, dest) -> bool:
-		if(origin in self.__edges and dest in self.__edges[origin]):
-			return True
+		edges = self.__edges
+
+		if(origin in edges and dest in edges[origin]): return True
 
 		return False
 
@@ -49,36 +50,40 @@ class Graph():
 		# we will be making things wrong
 		din = 0
 
-		if(verticeName in vertices):
-			din += 1
+		if(verticeName in vertices): din += 1
 
 		return din
 
-	def getNeighbors(self, verticeName: str) -> NodeNeighbors:
-		if(verticeName not in self.__edges):
-			raise Exception(f"Node '{verticeName}' unknown!")
+	def __initializeDegrees(self) -> dict:
+		degrees: dict = {}
 
-		return self.__edges[verticeName]
-
-	def getDegreesFrom(self, vertice: Node) -> Degree:
-		totalDegrees = {}
-
-		for k,v in self.__edges.items():
-			totalDegrees[k] = {
+		for k in self.__edges.keys():
+			degrees[k] = {
 				"din": 0,
 				"dout": 0,
 				"total": 0
 			}
 
+		return degrees
+
+	def getNeighbors(self, verticeName: str) -> NodeNeighbors:
+		edges = self.__edges
+
+		if(verticeName not in edges):
+			raise Exception(f"Node '{verticeName}' unknown!")
+
+		return edges[verticeName]
+
+	def getDegreesFrom(self, vertice: Node) -> Degree:
+		totalDegrees = self.__initializeDegrees()
+
+		for k,v in self.__edges.items():
 			din = 0
 			dout = 0
 			total = 0
 
 			dout = self.__findOutDegrees(k)
-
-			# this is looping through self.__edges[verticeName] by the way
-			# but it'll find nothing
-			din = self.__findInDegrees(vertice.getNodeName(), v)
+			din = self.__findInDegrees(vertice.getName(), v)
 			total = dout + din
 
 			totalDegrees[k]["dout"] = dout
@@ -88,27 +93,27 @@ class Graph():
 		return totalDegrees
 
 	def isPathValid(self, path: Path) -> bool:
-		if(self.__isTrivial(len(path))): return True
+		pathLength = len(path)
 
-		edges = self.__edges
+		if(self.__isTrivial(pathLength)): return True
 
-		for i in range(len(path) - 1):
-			testVertice = (path[i], path[i+1])
+		for i in range(pathLength - 1):
+			testPair = (path[i], path[i+1])
 
-			if(not self.__inEdge(testVertice[0], testVertice[1])):
+			if(not self.__inEdge(testPair[0], testPair[1])):
 				return False
 
 		return True
 
 	def appendEdge(self, edgeToAppend: Node) -> None:
-		self.__edges[edgeToAppend.getNodeName()] = edgeToAppend.getConnections()
+		self.__edges[edgeToAppend.getName()] = edgeToAppend.getConnections()
 
 	def removeVertice(self, edgeToRemove: Node) -> None:
 		edges = self.__edges
-		nameOfEdge = edgeToRemove.getNodeName()
+		nameOfEdge = edgeToRemove.getName()
 
 		if(nameOfEdge not in edges):
-			raise Exception(f"Edge {edgeToRemove.getNodeName()} does not exists")
+			raise Exception(f"Edge {nameOfEdge} does not exists")
 
 		for vertices in edges.values():
 			for i in range(len(vertices)):
